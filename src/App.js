@@ -14,17 +14,18 @@ function App() {
   const [pokemon, setPokemon] = useState({});
   const [pokemons, setPokemons] = useState([]);
 
+
   useEffect(() => {
     var input = document.querySelector('input[type="text"]');
     var elementToShow = document.getElementById('searchbutton');
 
     input.addEventListener('focus', function () {
-      elementToShow.style.display = 'block';
+      elementToShow.style.display = 'none';
     });
     input.addEventListener('blur', function () {
       setTimeout(function () {
-        elementToShow.style.display = 'none';
-      }, 1);
+        elementToShow.style.display = 'block';
+      }, 5);
     });
   }, []);
 
@@ -36,15 +37,20 @@ function App() {
         console.log(data.results)
         data.results.forEach(element => {
           fetch(element.url).then(response => response.json())
-          .then(data => {console.log(data); setPokemons(prevPokemons => [...prevPokemons, data]);})
+            .then(data => { console.log(data); setPokemons(prevPokemons => [...prevPokemons, data]); })
         });
-        })
+      })
   }, [])
 
 
-  const getPokemon = async(name) => {
-    const response=await fetch(`${API_URL}${name}`);
-    const data=await response.json();
+  const getPokemon = async (name) => {
+    const response = await fetch(`${API_URL}${name}`);
+    if (!response.ok) {
+      alert("Pokemon not found");
+      return;
+    }
+    const data = await response.json();
+
     setPokemon(data);
   }
 
@@ -63,7 +69,6 @@ function App() {
           </div>
         </div>
 
-
         {searchTerm ? (
         <div className="card">
           <Card pokemon={pokemon} />
@@ -76,7 +81,7 @@ function App() {
         </div>
       )}
 
-        
+
 
       </div>
 
